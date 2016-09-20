@@ -134,31 +134,27 @@
 ;; return a new file that has the same information
 ;; with new extention
 (define (new-ext f ext)
-  (string-append
-    (file-name f)
-    "."
-    (symbol->string ext)
-    "    "
-    (number->string(file-size f))))
+  (make-file
+   (file-name f)
+   ext
+   (file-size f)))
 ;; test
 (define File-Test2 (make-file "thesis" 'doc 1234))
-(check-expect (new-ext File-Test2 'pdf) "thesis.pdf    1234")
+(check-expect (new-ext File-Test2 'pdf) (make-file "thesis" 'pdf 1234))
 
 ;; 3.3
-;; increase-size : FILE SIZE -> FILE
+;; increase-size : FILE Number -> FILE
 ;; a funtion that given a file f and size s
 ;; returns a new file that has the same information as f
 ;; except that its size is now increased by s
 (define (increase-size f s)
-  (string-append
-    (file-name f)
-    "."
-    (symbol->string (file-extension f))
-    "    "
-    (number->string (+ s (file-size f)))))
+  (make-file
+   (file-name f)
+   (file-extension f)
+   (+ s (file-size f))))
 ;; test
 (define File-Test3 (make-file "thesis" 'doc 1234))
-(check-expect (increase-size File-Test3 6) "thesis.doc    1240")
+(check-expect (increase-size File-Test3 6)(make-file "thesis" 'doc 1240))
 
 ;; 4.1
 ;; print-program Program->String
@@ -178,4 +174,38 @@
 ;; test
 (define ProgramTest (make-program "ProgramTest" 30 'txt 20))
 (check-expect (print-program ProgramTest) "ProgramTest    30    txt    20")
+
+
+;; 4.2
+;; change-program: Program, Number Number -> Program
+;; Design a function that given a program p, version v, size s rutrns
+;; the same information as p except changed version and size as v s
+(define (change-program p v s)
+  (make-program
+    (program-name p)
+     v
+    (program-extension p)
+    s))
+
+;; test
+(define ProgramTest2 (make-program "ProgramTest" 30 'txt 20))
+(check-expect (change-program ProgramTest2 20 100) (make-program "ProgramTest" 20 'txt 100))
+
+
+;; 5
+;; match: Program, File -> Boolean
+;; a function that given a file and a program
+;; returns true if the program's extension matches files extension
+(define (match p f)
+  (symbol=?
+   (program-extension p)
+   (file-extension f)))
+
+;; test
+(define FileTest0 (make-file "thesis" 'doc 1234))
+(define ProgramTest0 (make-program "ProgramTest" 30 'txt 20))
+(define ProgramTest00 (make-program "ProgramTest" 30 'doc 20))
+(check-expect (match ProgramTest0 FileTest0) #false)
+(check-expect (match ProgramTest00 FileTest0) #true)
+
 
