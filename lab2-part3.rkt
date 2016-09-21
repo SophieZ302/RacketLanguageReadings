@@ -4,3 +4,4 @@
 ;; lab2
 ;; 3 Itemization that use structures
 ;; Excercise 1
+
